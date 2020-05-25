@@ -1,0 +1,68 @@
+Time: O(n) n is number of nodes in given tree
+Space: O(n) At a time, max number of elements in queue would be of one level in which every parent has two children, 
+              it will be n/2; hence O(n/2); asymptotically it is O(n)
+
+BFS
+-------
+class Solution {
+	public boolean isCousins(TreeNode root, int x, int y) {
+		//edge
+		if(root == null) return false;
+
+		//logic
+		int depth = 0;
+		Queue<TreeNode> q = new LinkedList<>();
+		q.add(root);
+		while(!q.isEmpty())
+		{
+			int size = q.size();
+			boolean x_found = false; boolean y_found = false;
+			for(int i=0; i< size; i++)
+			{
+				TreeNode curr = q.poll();
+				if(curr.val == x) x_found = true;
+				if(curr.val == y) y_found = true;
+
+				if(curr.left != null && curr.right != null)
+				{
+					if(curr.left.val == x && curr.right.val == y) return false;
+					if(curr.right.val == x && curr.left.val == y) return false;
+				}
+
+				if(curr.left != null) q.add(curr.left);
+				if(curr.right != null) q.add(curr.right);
+			}
+			if(x_found && y_found) return true;
+		}
+		return false; 
+
+	}
+}
+
+----------------------
+Time: O(n)
+Space: O(h) -- recursive stack space; h is height of tree
+DFS
+-------------
+class Solution {
+	int x_depth; int y_depth; 
+	TreeNode x_parent; TreeNode y_parent;
+	public boolean isCousins(TreeNode root, int x, int y) {
+
+		dfs(root, x, y,0, null);
+		return (x_depth == y_depth && x_parent != y_parent);
+	}
+	private void dfs(TreeNode root, int x, int y, int depth, TreeNode parent)
+	{
+
+		//base
+		if(root == null) return;
+		//logic
+		if(root.val == x) { x_depth = depth; x_parent = parent;}
+		if(root.val == y) { y_depth = depth; y_parent = parent;}
+
+		dfs(root.left, x, y, depth+1, root);
+		dfs(root.right,x, y, depth+1, root);
+
+	}
+}
